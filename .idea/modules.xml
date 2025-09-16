@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Frontier_jd.iml" filepath="$PROJECT_DIR$/.idea/Frontier_jd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/frontier_jd.iml" filepath="$PROJECT_DIR$/.idea/frontier_jd.iml" />
     </modules>
   </component>
 </project>

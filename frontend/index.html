@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FrontierJD ЛК</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        input, button { padding: 8px; margin: 5px 0; width: 250px; }
+        .section { margin-bottom: 30px; }
+        .output { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+<h1>FrontierJD Личный Кабинет</h1>
+
+<div class="section">
+    <h2>Проверка подключения к базе</h2>
+    <button onclick="pingDB()">Проверить</button>
+    <div id="pingResult" class="output"></div>
+</div>
+
+<div class="section">
+    <h2>Регистрация</h2>
+    <label for="regName"></label><input type="text" id="regName" placeholder="Имя (обязательно)"><br>
+    <label for="regPass"></label><input type="password" id="regPass" placeholder="Пароль (обязательно)"><br>
+    <label for="regPrompt"></label><input type="text" id="regPrompt" placeholder="Prompt (обязательно)"><br>
+    <label for="regEmail"></label><input type="email" id="regEmail" placeholder="Email (обязательно)"><br>
+    <button onclick="registerUser()">Зарегистрироваться</button>
+    <div id="regResult" class="output"></div>
+</div>
+
+<div class="section">
+    <h2>Вход</h2>
+    <label for="loginName"></label><input type="text" id="loginName" placeholder="Имя"><br>
+    <label for="loginPass"></label><input type="password" id="loginPass" placeholder="Пароль"><br>
+    <button onclick="loginUser()">Войти</button>
+    <div id="loginResult" class="output"></div>
+</div>
+
+<script>
+    function pingDB() {
+        fetch('../server/api/ping.php')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('pingResult').textContent = data.message;
+            })
+            .catch(e => document.getElementById('pingResult').textContent = 'Ошибка: '+e);
+    }
+
+    function registerUser() {
+        const formData = new FormData();
+        formData.append('name', document.getElementById('regName').value);
+        formData.append('passwd', document.getElementById('regPass').value);
+        formData.append('Prompt', document.getElementById('regPrompt').value);
+        formData.append('email', document.getElementById('regEmail').value);
+
+        fetch('../server/api/register.php', { method:'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('regResult');
+                el.textContent = data.message;
+                el.className = data.status === 'ok' ? 'output' : 'output error';
+            });
+    }
+
+    function loginUser() {
+        const formData = new FormData();
+        formData.append('name', document.getElementById('loginName').value);
+        formData.append('passwd', document.getElementById('loginPass').value);
+
+        fetch('../server/api/login.php', { method:'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('loginResult');
+                if(data.status === 'ok') {
+                    el.textContent = `Вход успешен: ${data.user.name}, email: ${data.user.email}`;
+                    el.className = 'output';
+                } else {
+                    el.textContent = data.message;
+                    el.className = 'output error';
+                }
+            });
+    }
+</script>
+</body>
+</html>
