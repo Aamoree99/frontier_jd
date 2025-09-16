@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация - FrontierJD ЛК</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="container auth-block">
+    <h1>Регистрация</h1>
+
+    <form id="registerForm" onsubmit="return false;">
+        <input type="text" id="regLogin" placeholder="Логин (макс 10 символов)" maxlength="10" required>
+        <input type="password" id="regPass" placeholder="Пароль (мин 6 символов)" required>
+        <input type="password" id="regPass2" placeholder="Повторите пароль" required>
+        <select id="regPrompt" required>
+            <option value="">Выберите вопрос</option>
+            <option value="pet">Кличка питомца</option>
+            <option value="school">Школа</option>
+            <option value="city">Город рождения</option>
+        </select>
+        <input type="text" id="regAnswer" placeholder="Ответ на вопрос" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+
+        <button onclick="registerUser()">Зарегистрироваться</button>
+    </form>
+
+    <div id="regResult" class="output"></div>
+    <p><a href="index.html">← Вернуться на главную</a></p>
+</div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

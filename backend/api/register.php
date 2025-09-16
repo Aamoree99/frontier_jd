@@ -1,74 +1,71 @@
 <?php
-require_once "../db.php";
 header('Content-Type: application/json');
-
 /** @var mysqli $conn */
+$conn = require '../db.php';
 
-// обязательные поля
-$name   = trim($_POST['name'] ?? '');
-$pass   = trim($_POST['passwd'] ?? '');
-$email  = trim($_POST['email'] ?? '');
-$prompt = trim($_POST['Prompt'] ?? '');
 
-// необязательные
-$answer       = trim($_POST['answer'] ?? '');
-$truename     = trim($_POST['truename'] ?? '');
-$mobilenumber = trim($_POST['mobilenumber'] ?? '');
-$province     = trim($_POST['province'] ?? '');
-$city         = trim($_POST['city'] ?? '');
-$phonenumber  = trim($_POST['phonenumber'] ?? '');
-$address      = trim($_POST['address'] ?? '');
-$postalcode   = trim($_POST['postalcode'] ?? '');
-$gender       = intval($_POST['gender'] ?? 0);
-$birthday     = $_POST['birthday'] ?? NULL;
-$qq           = trim($_POST['qq'] ?? '');
-$passwd2      = trim($_POST['passwd2'] ?? '');
+// Получаем POST данные
+$name       = trim($_POST['name'] ?? '');
+$passwd     = trim($_POST['passwd'] ?? '');
+$prompt     = trim($_POST['Prompt'] ?? '');
+$answer     = trim($_POST['answer'] ?? '');
+$email      = trim($_POST['email'] ?? '');
+$referal    = intval($_POST['referal'] ?? 0);
+$register_gold = intval($_POST['register_gold'] ?? 0);
 
-// проверка обязательных
-if (!$name || !$pass || !$email || !$prompt) {
-    echo json_encode(["status"=>"error","message"=>"Заполните все обязательные поля"]);
+// Проверка обязательных полей
+if (!$name || !$passwd || !$prompt || !$answer || !$email) {
+    echo json_encode(["status"=>"error", "message"=>"Пожалуйста, заполните все обязательные поля"]);
     exit;
 }
 
-// проверка уникальности имени
-$res = mysqli_query($conn, "SELECT ID FROM users WHERE name='".mysqli_real_escape_string($conn, $name)."'");
-if (mysqli_num_rows($res) > 0) {
-    echo json_encode(["status"=>"error","message"=>"Имя уже занято"]);
+// Проверка уникальности имени
+$stmt = $conn->prepare("SELECT ID FROM users WHERE name = ?");
+$stmt->bind_param("s", $name);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    echo json_encode(["status"=>"error", "message"=>"Имя уже занято"]);
     exit;
 }
+$stmt->close();
 
-// хеш пароля MD5 для совместимости с игрой
-$pass_md5  = md5($pass);
-$pass2_md5 = $passwd2 ? md5($passwd2) : NULL;
+// Проверка уникальности email
+$stmt = $conn->prepare("SELECT ID FROM users WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    echo json_encode(["status"=>"error", "message"=>"Email уже используется"]);
+    exit;
+}
+$stmt->close();
 
-// формат даты рождения
-$birthday_sql = $birthday ? "'".mysqli_real_escape_string($conn, $birthday)."'" : "NULL";
+// Генерация нового ID (по старой логике: max(id)+16)
+$result = $conn->query("SELECT IFNULL(MAX(ID),16)+16 AS newid FROM users");
+$row = $result->fetch_assoc();
+$userid = intval($row['newid']);
 
-// вставка пользователя
-$sql = "INSERT INTO users 
-(name, passwd, Prompt, answer, truename, email, mobilenumber, province, city, phonenumber, address, postalcode, gender, birthday, creatime, qq, passwd2)
-VALUES (
-'".mysqli_real_escape_string($conn,$name)."',
-'$pass_md5',
-'".mysqli_real_escape_string($conn,$prompt)."',
-'".mysqli_real_escape_string($conn,$answer)."',
-'".mysqli_real_escape_string($conn,$truename)."',
-'".mysqli_real_escape_string($conn,$email)."',
-'".mysqli_real_escape_string($conn,$mobilenumber)."',
-'".mysqli_real_escape_string($conn,$province)."',
-'".mysqli_real_escape_string($conn,$city)."',
-'".mysqli_real_escape_string($conn,$phonenumber)."',
-'".mysqli_real_escape_string($conn,$address)."',
-'".mysqli_real_escape_string($conn,$postalcode)."',
-$gender,
-$birthday_sql,
-NOW(),
-'".mysqli_real_escape_string($conn,$qq)."',
-".($pass2_md5 ? "'$pass2_md5'" : "NULL")."
-)";
+// MD5 пароля
+$hash_pass = md5($passwd);
 
-if (mysqli_query($conn, $sql)) {
-    echo json_encode(["status"=>"ok","message"=>"Регистрация успешна"]);
+// Вставка пользователя
+$stmt = $conn->prepare("
+    INSERT INTO users 
+    (ID, name, passwd, Prompt, answer, email, creatime, referal) 
+    VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
+");
+$stmt->bind_param("isssssi", $userid, $name, $hash_pass, $prompt, $answer, $email, $referal);
+
+if ($stmt->execute()) {
+    // Если есть бонус за регистрацию
+    if ($register_gold > 0 && function_exists('UseCash')) {
+        UseCash($userid, 0, 0, $register_gold*100); // zoneid и aid можно заменить при необходимости
+    }
+    echo json_encode(["status"=>"ok", "message"=>"Регистрация успешна", "userid"=>$userid]);
 } else {
-    echo json_encode(["status"=>"error","message"=>"Ошибка базы: ".mysqli_error($conn)]);
+    echo json_encode(["status"=>"error", "message"=>"Ошибка базы данных: ".$stmt->error]);
 }
+
+$stmt->close();
+$conn->close();

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FrontierJD — Вход</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="container auth-block">
+    <h1>Вход в Личный Кабинет</h1>
+
+    <form id="loginForm" onsubmit="return false;">
+        <input type="text" id="loginName" placeholder="Логин" required>
+        <input type="password" id="loginPass" placeholder="Пароль" required>
+
+        <button onclick="loginUser()">Войти</button>
+    </form>
+
+    <div id="loginResult" class="output"></div>
+    <p><a href="register.html">Регистрация нового пользователя →</a></p>
+</div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

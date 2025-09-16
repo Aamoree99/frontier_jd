@@ -1,86 +1,114 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>FrontierJD ЛК</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        input, button { padding: 8px; margin: 5px 0; width: 250px; }
-        .section { margin-bottom: 30px; }
-        .output { margin-top: 10px; color: green; }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FrontierJD — Jade Dynasty</title>
+
+    <!-- Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (уже было) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<h1>FrontierJD Личный Кабинет</h1>
+<!-- HERO -->
+<header class="hero" role="banner" aria-label="Главный баннер">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-inner container">
+        <div class="brand">
+            <img src="images/logo.png" alt="FrontierJD" class="logo">
+            <h1 class="title">FrontierJD — возвращение легенды</h1>
+            <p class="subtitle">Погрузись в атмосферу классической Jade Dynasty. Клиенты, аккаунты и сообщество — всё в одном месте.</p>
+        </div>
 
-<div class="section">
-    <h2>Проверка подключения к базе</h2>
-    <button onclick="pingDB()">Проверить</button>
-    <div id="pingResult" class="output"></div>
-</div>
+        <div class="hero-cta" role="navigation" aria-label="Действия">
+            <!-- Главная кнопка -->
+            <a class="btn btn-primary" href="download.html">Скачать клиент</a>
 
-<div class="section">
-    <h2>Регистрация</h2>
-    <label for="regName"></label><input type="text" id="regName" placeholder="Имя (обязательно)"><br>
-    <label for="regPass"></label><input type="password" id="regPass" placeholder="Пароль (обязательно)"><br>
-    <label for="regPrompt"></label><input type="text" id="regPrompt" placeholder="Prompt (обязательно)"><br>
-    <label for="regEmail"></label><input type="email" id="regEmail" placeholder="Email (обязательно)"><br>
-    <button onclick="registerUser()">Зарегистрироваться</button>
-    <div id="regResult" class="output"></div>
-</div>
+            <!-- Дропдаун -->
+            <div class="dropdown">
+                <button class="btn btn-outline dropdown-toggle">
+                    Личный кабинет <i class="fas fa-caret-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <a href="register.html">Регистрация</a>
+                    <a href="login.html">Войти</a>
+                </div>
+            </div>
+        </div>
 
-<div class="section">
-    <h2>Вход</h2>
-    <label for="loginName"></label><input type="text" id="loginName" placeholder="Имя"><br>
-    <label for="loginPass"></label><input type="password" id="loginPass" placeholder="Пароль"><br>
-    <button onclick="loginUser()">Войти</button>
-    <div id="loginResult" class="output"></div>
-</div>
+    </div>
+</header>
 
-<script>
-    function pingDB() {
-        fetch('../server/api/ping.php')
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('pingResult').textContent = data.message;
-            })
-            .catch(e => document.getElementById('pingResult').textContent = 'Ошибка: '+e);
-    }
+<!-- FEATURES -->
+<section class="features container" id="features">
+    <h2>Почему FrontierJD?</h2>
+    <div class="features-grid">
+        <article class="feature">
+            <span class="icon"><i class="fas fa-balance-scale"></i></span>
+            <h3>Баланс и честность</h3>
+            <p>Игровой баланс настроен для честной и интересной борьбы — и для дуэлей, и для фарма.</p>
+        </article>
 
-    function registerUser() {
-        const formData = new FormData();
-        formData.append('name', document.getElementById('regName').value);
-        formData.append('passwd', document.getElementById('regPass').value);
-        formData.append('Prompt', document.getElementById('regPrompt').value);
-        formData.append('email', document.getElementById('regEmail').value);
+        <article class="feature">
+            <span class="icon"><i class="fas fa-globe"></i></span>
+            <h3>Классическая атмосфера</h3>
+            <p>Ощути узнаваемый мир Jade Dynasty — знакомые локации, музыка и механики.</p>
+        </article>
 
-        fetch('../server/api/register.php', { method:'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById('regResult');
-                el.textContent = data.message;
-                el.className = data.status === 'ok' ? 'output' : 'output error';
-            });
-    }
+        <article class="feature">
+            <span class="icon"><i class="fas fa-shield-alt"></i></span>
+            <h3>Поддержка и стабильность</h3>
+            <p>Администрация следит за сервером 24/7, быстрый отклик и оперативные решения.</p>
+        </article>
 
-    function loginUser() {
-        const formData = new FormData();
-        formData.append('name', document.getElementById('loginName').value);
-        formData.append('passwd', document.getElementById('loginPass').value);
+        <article class="feature">
+            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+            <h3>Регулярные события</h3>
+            <p>Ивенты, турниры и внутриигровые активности — чтобы всегда было куда стремиться.</p>
+        </article>
 
-        fetch('../server/api/login.php', { method:'POST', body: formData })
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById('loginResult');
-                if(data.status === 'ok') {
-                    el.textContent = `Вход успешен: ${data.user.name}, email: ${data.user.email}`;
-                    el.className = 'output';
-                } else {
-                    el.textContent = data.message;
-                    el.className = 'output error';
-                }
-            });
-    }
-</script>
+        <article class="feature">
+            <span class="icon"><i class="fas fa-cogs"></i></span>
+            <h3>Удобный старт</h3>
+            <p>Пошаговые инструкции и поддержка новичков — начни играть быстро и без проблем.</p>
+        </article>
+
+        <article class="feature">
+            <span class="icon"><i class="fas fa-users"></i></span>
+            <h3>Активное сообщество</h3>
+            <p>Кланы, чаты, мероприятия — заходи в наш канал и найди союзников.</p>
+        </article>
+    </div>
+</section>
+
+<!-- SOCIALS -->
+<section class="socials container" aria-label="Сообщества">
+    <h2>Сообщества</h2>
+    <p class="socials-desc">Присоединяйся к нашим сообществам, чтобы ни в чём не пропустить:</p>
+    <div class="social-icons" role="list">
+        <a class="social" role="listitem" href="https://vk.com/yourserver" target="_blank" rel="noopener noreferrer" aria-label="VK"><i class="fab fa-vk"></i></a>
+        <a class="social" role="listitem" href="https://t.me/yourserver" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+        <a class="social" role="listitem" href="https://discord.gg/yourserver" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord"></i></a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+    <div class="container footer-inner">
+        <div class="left">
+            <p>© 2025 FrontierJD. Все права защищены.</p>
+        </div>
+        <div class="right">
+            <a href="rules.html">Правила</a>
+            <a href="support.html">Поддержка</a>
+            <a href="contacts.html">Контакты</a>
+        </div>
+    </div>
+</footer>
 </body>
+
 </html>

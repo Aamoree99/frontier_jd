@@ -1,0 +1,82 @@
+/* ===== Auth block (login/register) ===== */
+.auth-block {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    max-width: 420px;
+    margin: 60px auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Заголовки */
+.auth-block h1 {
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Поля формы */
+.auth-block input,
+.auth-block select,
+.auth-block button {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px;
+    font-size: 15px;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+/* Inputs */
+.auth-block input,
+.auth-block select {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.auth-block input:focus,
+.auth-block select:focus {
+    border-color: rgba(var(--accent-rgb), 0.6);
+    outline: none;
+    background: rgba(var(--accent-rgb), 0.06);
+}
+
+/* Кнопки */
+.auth-block button {
+    background: linear-gradient(180deg, rgba(var(--accent-rgb),1), rgba(var(--accent-rgb),0.9));
+    color: #05110f;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: transform var(--transition), filter var(--transition);
+}
+.auth-block button:hover {
+    transform: translateY(-3px);
+    filter: brightness(0.96);
+}
+
+/* Ошибки и подсказки */
+.output {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--accent);
+    text-align: center;
+}
+.output.error {
+    color: #ff6b6b;
+}
+
+/* Адаптив */
+@media (max-width: 520px) {
+    .auth-block {
+        margin: 40px 16px;
+        padding: 24px 20px;
+    }
+    .auth-block h1 {
+        font-size: 20px;
+    }
+}
